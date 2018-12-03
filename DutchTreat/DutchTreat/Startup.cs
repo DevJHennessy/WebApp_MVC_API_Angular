@@ -15,6 +15,8 @@ namespace DutchTreat
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //ASP.NET Core requires you to use dependency injection.
+            services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -23,14 +25,35 @@ namespace DutchTreat
 
             //Configuring the web server to do something:
             //Using static files only serves files inside the wwwroot directory.
-            app.UseDefaultFiles();
+            //Once you start using MVC, you no longer are serving the HTML file,
+            //So you don't need the app.UseDefaultFiles() anymore.
+            //app.UseDefaultFiles();
+
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/error");
+            }
+
             app.UseStaticFiles();
+
+            //Using jQuery
             app.UseNodeModules(env);
 
+            app.UseMvc(cfg => 
+            {
+                cfg.MapRoute("Default", "/{controller}/{action}/{id?}", 
+                    new { controller = "App",
+                        Action = "Index" });
+            });
 
 
             //Default code:
-            
+
             //if (env.IsDevelopment())
             //{
             //    app.UseDeveloperExceptionPage();
